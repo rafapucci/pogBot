@@ -1,6 +1,9 @@
 #!/usr/bin/python3
 import sys
 import socket
+import random
+
+cervas = "cervas.db"
 
 def conn(HOST, PORT, NICK, IDENT, REALNAME, BOTMSG, CHAN):
     s=socket.socket( )
@@ -11,6 +14,14 @@ def conn(HOST, PORT, NICK, IDENT, REALNAME, BOTMSG, CHAN):
     s.send(bytes("JOIN {}\n".format(CHAN), "UTF-8"));
     s.send(bytes("PRIVMSG {} :Oi pessoal! Eu sou o {}, um bot beberrum. Peca sua cerva com {}\n".format(CHAN, NICK, "!CERVA") , "UTF-8"))
     return s
+
+def getCerva():
+     return random.choice(open(cervas).read().splitlines())
+
+def setCerva(cerva):
+    file = open(cervas, "a")
+    file.write(cerva+"\n")
+    file.close()
 
 def answer():
     sender = ""
@@ -27,17 +38,22 @@ def answer():
         i = i + 1
     message.lstrip(":")
     if "!CERVA" in message:
-        s.send(bytes("PRIVMSG {} :Saindo uma gelada para {}!\n".format(CHAN, sender) , "UTF-8"))
+        s.send(bytes("PRIVMSG {} :Saindo uma {} gelada para {}!\n".format(CHAN, getCerva(), sender) , "UTF-8"))
+
+    if "!ADD" in message:
+        setCerva(message[6:])
+        s.send(bytes("PRIVMSG {} :Adicionando a cerva {} no database!\n".format(CHAN, message[6:]), "UTF-8"))
+
 
 ###### CONFIG OPTIONS ######
 HOST = "irc.freenode.org"
 PORT = 6667
 
-NICK = "pogBot"
-IDENT = "pogBot"
-REALNAME = "pogBot"
-BOTMSG = "peça sua cerva"
-CHAN = "#pogTest"
+NICK = "pogBot2"
+IDENT = "pogBot2"
+REALNAME = "pogBot2"
+BOTMSG = "peça sua cerva2"
+CHAN = "#pogTest2"
 
 
 s = conn(HOST, PORT, NICK, IDENT, REALNAME, BOTMSG, CHAN)
